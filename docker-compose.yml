@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres_db:
+    image: postgres:15
+    container_name: hardened_postgres
+    environment:
+      POSTGRES_USER: medusa_admin
+      POSTGRES_PASSWORD: StrongScramPassword123!
+      POSTGRES_DB: medusa_db
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    # Forcing modern scram-sha-256 encryption
+    command: ["postgres", "-c", "password_encryption=scram-sha-256"]
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - isolated_backend
+    restart: unless-stopped
+    # Notice: No 'ports' mapping. This ensures the host cannot access the DB.
+
+  redis_cache:
+    image: redis:7
+    container_name: hardened_redis
+    # Forcing authentication and disabling dangerous administrative commands
+    command: >
+      --requirepass "StrongRedisPassword123!"
+      --rename-command FLUSHALL ""
+      --rename-command FLUSHDB ""
+      --rename-command CONFIG ""
+      --rename-command KEYS ""
+    volumes:
+      - redis_data:/data
+    networks:
+      - isolated_backend
+    restart: unless-stopped
+    # Notice: No 'ports' mapping here either.
+
+volumes:
+  pg_data:
+  redis_data:
+
+networks:
+  isolated_backend:
+    driver: bridge
