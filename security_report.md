@@ -30,16 +30,6 @@
 * **My Verification/Fix:** While the AI claimed it used "security best practices," I noticed it mapped PostgreSQL directly to the host (`ports: - "5432:5432"`) and completely forgot to add a `requirepass` argument to the Redis container. I had to manually delete the Postgres ports directive to keep it on the internal network and rewrite the Redis command line to enforce a password. This proved that AI will confidently output insecure infrastructure if you don't audit its code.
 
 
-# Check to make sure all your files are there
-git init
-git remote add origin https://github.com/YourUsername/YourRepoName.git
-# Stage all the files (the period means 'everything')
-git status 
-git add .
-# Package them with a professional commit message
-git commit -m "Week 1: Hardened Backend Stack & Artifacts"
-# Push the evidence to your remote repository
-git branch -M main 
-git push origin main
+
 
 
